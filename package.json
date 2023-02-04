@@ -1,0 +1,16 @@
+{
+  "name": "tiniexpress",
+  "version": "1.0.0",
+  "description": "A minimal express clone for learn basic concepts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "expressjs",
+    "learn",
+    "nodejs"
+  ],
+  "author": "fgambetta",
+  "license": "ISC"
+}
