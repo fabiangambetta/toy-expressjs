@@ -1,12 +1,20 @@
+const server = require('../server/index');
+const requestListenner = require('../requestListener/index');
+
 const application = (configs = {}) => {
-    const middlewares = [];
-    const routesToHandle = [];
-    const addMiddleware = (middleware) => {
-        middlewares.push(middleware);
+
+    const requestListenner = requestListenner();
+
+    const get = (path, handler) => {
+        requestListenner.handle('GET', path, handler);
     }
 
-    const get = (path, routeHandler) => {
-        routeHandler.push({route: path, handler: routeHandler});
+    const use = (middleware) => {
+        requestListenner.use(path, hanlder);
+    }
+
+    const listen = (port, message) => {
+        server.createServer(port, requestListenner.listenner(), message);
     }
 }
 
