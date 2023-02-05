@@ -1,16 +1,14 @@
 const server = require('../server/index');
 const requestListenner = require('../requestListener/index');
 
-const application = (configs = {}) => {
-
-    const requestListenner = requestListenner();
+const application = () => {
 
     const get = (path, handler) => {
-        requestListenner.handle('GET', path, handler);
+        requestListenner().handle('GET', path, handler);
     }
 
     const use = (middleware) => {
-        requestListenner.use(path, hanlder);
+        requestListenner().use(path, hanlder);
     }
 
     const listen = (port, message) => {

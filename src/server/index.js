@@ -1,11 +1,10 @@
 const http = require('http');
 
-const server = () => {
-
-    const createServer = (requestListenner, port, message) => {
-        http.createServer(requestListenner).listen();
-        console.log(message);
+const server = {
+    createServer: (requestListener, port, message) => {
+      http.createServer(requestListener).listen(port);
+      console.log(message);
     }
-}
+  };
 
 module.exports = server;
