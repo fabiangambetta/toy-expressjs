@@ -5,7 +5,7 @@ const requestListener = {
     listenner: (req, res) => {
       const { method, path } = req;
       const handler = requestListener.routesToHandle[method][path];
-      if (typeof handler === 'function') handler();
+      if (typeof handler === 'function') handler(req, res);
     },
   
     use: (path, handler) => {
