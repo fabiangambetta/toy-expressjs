@@ -2,11 +2,11 @@ const http = require("http");
 const DecoratedResponse = require("../extended/decoratedResponse");
 
 const server = {
-  createServer: (requestListener, port, message) => {
+  createServer: (requestListener, port) => {
     http
       .createServer({ ServerResponse: DecoratedResponse }, requestListener)
       .listen(port);
-    console.log(message);
+    console.log(`App listening on port ${port}`);
   },
 };
 
