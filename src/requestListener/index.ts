@@ -28,13 +28,15 @@ const requestListener: RequestListenner = {
     //@ts-ignore
     req.cosas = "fruta";
     // Testear esto
+    const segments = ((url as unknown) as string ).split("/");
+
     const routeMetadata = routeTree.getRouteMetadata(
       requestListener.handlers[method as HttpMethod],
-      url.split("/")
+      segments.filter(segment => segment!='')
     );
     req.setParams(routeMetadata.params);
     //
-    if (typeof handler === "function") handler(req, res);
+    if (typeof routeMetadata.handler === "function") routeMetadata.handler(req, res);
   },
 
   use: (path, handler) => {

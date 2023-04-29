@@ -11,3 +11,4 @@ class DecoratedResponse extends http_1.ServerResponse {
     }
 }
 exports.default = DecoratedResponse;
+//# sourceMappingURL=decoratedResponse.js.map

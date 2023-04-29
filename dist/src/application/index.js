@@ -27,7 +27,9 @@ httpVerbs.forEach((httpVerb) => {
         // path puede ser por ejemplo /users/:id/sales
         if (typeof handler === "function") {
             index_2.default.handle(httpVerb, path, handler);
+            index_2.default.handleV2(httpVerb, path, handler);
         }
     };
 });
 exports.default = application;
+//# sourceMappingURL=index.js.map

@@ -25,8 +25,13 @@ const requestListener = {
         const handler = requestListener.routesToHandle[method][url];
         //@ts-ignore
         req.cosas = "fruta";
-        if (typeof handler === "function")
-            handler(req, res);
+        // Testear esto
+        const segments = url.split("/");
+        const routeMetadata = routeTree_1.default.getRouteMetadata(requestListener.handlers[method], segments.filter(segment => segment != ''));
+        req.setParams(routeMetadata.params);
+        //
+        if (typeof routeMetadata.handler === "function")
+            routeMetadata.handler(req, res);
     },
     use: (path, handler) => {
         requestListener.middlewares[path] = handler;
@@ -53,3 +58,4 @@ httpVerbs.forEach((httpVerb) => {
     };
 });
 exports.default = requestListener;
+//# sourceMappingURL=index.js.map

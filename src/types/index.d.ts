@@ -1,25 +1,22 @@
 import * as http from 'http';
 
-export type Request = http.IncomingMessage;
-export type RequestHandler = (req: Request, res:any) => void;
-
-type SimpleHandler = (req: SimpleRequest, res: SimpleResponse) => void;
+type RequestHandler = (req: Request, res: Response) => void;
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS" | "PATCH"; 
-type MethodIndexed = {
-    [method in HttpMethod]?: (path: string, handler: SimpleHandler) => void;
+type HttpMethodMap = {
+    [method in HttpMethod]?: (path: string, handler: RequestHandler) => void;
 }
 
-type ApplicationServer = {
-    use: (path: string, middleware: SimpleHandler) => void;
+type AppRouteHandle = {
+    use: (path: string, middleware: RequestHandler) => void;
     listen: (port: number) => void;
 }
 
-type Application = MethodIndexed & ApplicationServer;
+type Application = HttpMethodMap & AppRouteHandle;
 
-type RouteHandlers = Record<HttpMethod, Record<string, SimpleHandler>>;
-type MiddlewareHandlers = Record<string, SimpleHandler>;
-type Handle = (method: HttpMethod, path: string, handler: SimpleHandler ) => void;
-type Use = (path: string, middleware: SimpleHandler) => void;
+type RouteHandlers = Record<HttpMethod, Record<string, RequestHandler>>;
+type MiddlewareHandlers = Record<string, RequestHandler>;
+type Handle = (method: HttpMethod, path: string, handler: RequestHandler ) => void;
+type Use = (path: string, middleware: RequestHandler) => void;
 
 type RequestListenner = {
     routesToHandle: RouteHandlers;
@@ -27,7 +24,7 @@ type RequestListenner = {
     use: Use;
     handle: Handle;
     handleV2: Handle;
-    listenner: SimpleHandler;
+    listenner: RequestHandler;
     handlers: Record<HttpMethod, RouteNode>;
 }
 
@@ -45,12 +42,12 @@ type Param = {
     value: string;
 }
 
-type Params = Array<Param>;
+type RequestParams = Record<string, string>;
 type RouterMetaData = {
-    params: Params;
+    params:  Array<Param>;
     handler:  http.RequestListener;
 }
 
 
-type SimpleRequest = DecoratedRequest;
-type SimpleResponse = DecoratedResponse<SimpleRequest>;
+type Request = DecoratedRequest;
+type Response = DecoratedResponse<Request>;

@@ -9,6 +9,7 @@
       "moduleResolution": "node",
       "resolveJsonModule": true,
       "outDir": "./dist",
+      "sourceMap": true,
     },
     "include": ["src/**/*.ts", "src/**/*d.ts", "examples"],
     "exclude": ["node_modules"]

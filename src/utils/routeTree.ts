@@ -7,7 +7,7 @@ const add = (tree: RouteNode, route: string, handler: http.RequestListener) => {
       "The expected element tree must be the root of the routeTree"
     );
   if (!route) throw new Error("Invalid route path");
-  const segments = route.split("/");
+  const segments = route.split("/").filter(segment => segment != '');
   addRecursively(tree, segments, handler);
 };
 
@@ -68,9 +68,9 @@ const getRouteMetadata = (
     // valido si es un param
     const matchParams = childrens.find((node) => node.type === "PARAM");
     if (matchParams) {
-      const result = getRouteMetadata(matchParams, remainingSegments);
+      const result = getRouteMetadata(matchParams, segments);
       return {
-        params: [...result.params, { name: matchParams.value, value: segment }],
+        params: [...result.params],
         handler: result.handler,
       };
     } else {

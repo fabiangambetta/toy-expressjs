@@ -5,8 +5,8 @@ application.GET!('/cositas', (req, res)=>{
     res.send('Escuche en cositas y te respondo');
 })
 
-application.GET!('/bolso', (req, res)=>{
-    res.send('Escuche en bolso y te respondo, again' + req.cosas);
+application.GET!('/bolso/:id', (req, res)=>{
+    res.send('Escuche en bolso y te respondo, again' + req._params[0].value);
 })
 
 application.PUT!('/bolso', (req, res)=>{

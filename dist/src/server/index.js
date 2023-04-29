@@ -39,3 +39,4 @@ const server = {
     },
 };
 exports.default = server;
+//# sourceMappingURL=index.js.map

@@ -1,7 +1,7 @@
 import server from "../server/index";
 import requestListenner from "../requestListener/index";
 import * as http from "http";
-import { Application, HttpMethod, SimpleHandler } from "../types";
+import { Application, HttpMethod, RequestHandler } from "../types";
 
 const httpVerbs: Array<HttpMethod> = [
   "GET",
@@ -24,10 +24,11 @@ const application: Application = {
 };
 
 httpVerbs.forEach((httpVerb) => {
-  application[httpVerb] = (path: string, handler: SimpleHandler) => {
+  application[httpVerb] = (path: string, handler: RequestHandler) => {
     // path puede ser por ejemplo /users/:id/sales
     if (typeof handler === "function") {
       requestListenner.handle(httpVerb, path, handler);
+      requestListenner.handleV2(httpVerb, path, handler);
     }
   };
 });
