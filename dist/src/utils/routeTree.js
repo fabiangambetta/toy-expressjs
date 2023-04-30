@@ -5,7 +5,7 @@ const add = (tree, route, handler) => {
         throw new Error("The expected element tree must be the root of the routeTree");
     if (!route)
         throw new Error("Invalid route path");
-    const segments = route.split("/").filter(segment => segment != '');
+    const segments = route.split("/").filter((segment) => segment != "");
     addRecursively(tree, segments, handler);
 };
 const addRecursively = (tree, segments, handler) => {
@@ -29,34 +29,32 @@ const addRecursively = (tree, segments, handler) => {
     addRecursively(tree.childrens.find((node) => node.value === value), remainingSegments, handler);
 };
 const getRouteMetadata = (tree, segments) => {
-    const segment = segments[0];
-    const remainingSegments = segments.slice(1);
-    const { handler, value, type } = tree;
-    if (handler && type === "PARAM") {
-        return { params: [{ name: value, value: segment }], handler };
+    const [segment, ...remainingSegments] = segments;
+    const { handler, value, type, childrens } = tree;
+    if (handler && remainingSegments.length === 0) {
+        const params = type === "PARAM" ? [{ name: value, value: segment }] : [];
+        return { params, handler };
     }
-    if (handler) {
-        return { params: [], handler };
-    }
-    const { childrens } = tree;
-    // Valido si es un segmento de una ruta
     const matchSegment = childrens.find((node) => node.value === segment && node.type === "SEGMENT");
-    if (matchSegment)
+    if (matchSegment) {
         return getRouteMetadata(matchSegment, remainingSegments);
-    else {
-        // valido si es un param
-        const matchParams = childrens.find((node) => node.type === "PARAM");
-        if (matchParams) {
-            const result = getRouteMetadata(matchParams, segments);
+    }
+    const matchParams = childrens.find((node) => node.type === "PARAM");
+    if (matchParams) {
+        const updatedSegments = remainingSegments.length === 0 ? segments : remainingSegments;
+        const result = getRouteMetadata(matchParams, updatedSegments);
+        if (remainingSegments.length !== 0) {
             return {
-                params: [...result.params],
+                params: [...result.params, { name: matchParams.value, value: segment }],
                 handler: result.handler,
             };
         }
-        else {
-            throw new Error("No route was matched by path");
-        }
+        return {
+            params: [...result.params],
+            handler: result.handler,
+        };
     }
+    throw new Error("No route was matched by path");
 };
 exports.default = { add, addRecursively, getRouteMetadata };
 //# sourceMappingURL=routeTree.js.map

@@ -21,7 +21,7 @@ class DecoratedRequest extends http_1.IncomingMessage {
             }
             // Ensure the parameter does not already exist to prevent overriding
             if (this.params.hasOwnProperty(param.name)) {
-                throw new Error(`Duplicate parameter: "${param.name}" already exists in the request parameters.`);
+                // throw new Error(`Duplicate parameter: "${param.name}" already exists in the request parameters.`);
             }
             this.params[param.name] = param.value;
         });
