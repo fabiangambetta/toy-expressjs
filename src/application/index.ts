@@ -19,16 +19,25 @@ const application: Application = {
   },
 
   listen: (port: number) => {
+    if (!Number.isInteger(port) || port <= 0) {
+      throw new Error("Port must be a positive integer.");
+    }
     server.createServer(port, requestListenner.onRequest);
   },
 };
 
 httpVerbs.forEach((httpVerb) => {
   application[httpVerb] = (path: string, handler: RequestHandler) => {
-    // path puede ser por ejemplo /users/:id/sales
-    if (typeof handler === "function") {
-      requestListenner.handle(httpVerb, path, handler);
+    if (typeof path !== "string" || path.trim() === "") {
+      throw new Error("Path must be a non-empty string.");
     }
+
+    if (typeof handler !== "function") {
+      throw new Error("Handler must be a function.");
+    }
+
+    // path puede ser por ejemplo /users/:id/sales
+    requestListenner.handle(httpVerb, path, handler);
   };
 });
 
