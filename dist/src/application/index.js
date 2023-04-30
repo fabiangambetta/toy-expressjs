@@ -14,7 +14,7 @@ const httpVerbs = [
     "POST",
     "PATCH",
 ];
-const application = {
+const AppRoute = {
     use: (path, middleware) => {
         index_2.default.mount(path, middleware);
     },
@@ -25,8 +25,9 @@ const application = {
         index_1.default.createServer(port, index_2.default.onRequest);
     },
 };
+const httpMethods = {};
 httpVerbs.forEach((httpVerb) => {
-    application[httpVerb] = (path, handler) => {
+    httpMethods[httpVerb] = (path, handler) => {
         if (typeof path !== "string" || path.trim() === "") {
             throw new Error("Path must be a non-empty string.");
         }
@@ -37,5 +38,9 @@ httpVerbs.forEach((httpVerb) => {
         index_2.default.handle(httpVerb, path, handler);
     };
 });
+const application = {
+    ...AppRoute,
+    ...httpMethods,
+};
 exports.default = application;
 //# sourceMappingURL=index.js.map

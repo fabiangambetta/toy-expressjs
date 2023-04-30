@@ -70,7 +70,7 @@ const getRouteMetadata = (
     if (matchParams) {
       const result = getRouteMetadata(matchParams, segments);
       return {
-        params: [...result.params],
+        params: [...result.params, { name: matchParams.value, value: segment }],
         handler: result.handler,
       };
     } else {

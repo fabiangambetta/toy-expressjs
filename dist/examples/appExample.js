@@ -16,7 +16,7 @@ index_1.default.GET('/bolso/:id', (req, res) => {
 index_1.default.GET('/bolso/:id/prueba/:name', (req, res) => {
     const { params } = req;
     const { id } = params;
-    res.send('Escuche en bolso y te respondo, again' + id);
+    res.send('Escuche en bolso y te respondo, again  ' + JSON.stringify(req.params));
 });
 index_1.default.PUT('/bolso', (req, res) => {
     res.send('Escuche en bolso y te respondo, PUT');

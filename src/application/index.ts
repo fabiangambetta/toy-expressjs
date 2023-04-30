@@ -1,7 +1,12 @@
 import server from "../server/index";
 import requestListenner from "../requestListener/index";
 import { RequestListener } from "http";
-import { Application, HttpMethod, RequestHandler } from "../types";
+import {
+  Application,
+  AppRouteHandle,
+  HttpMethod,
+  RequestHandler,
+} from "../types";
 
 const httpVerbs: HttpMethod[] = [
   "GET",
@@ -13,7 +18,7 @@ const httpVerbs: HttpMethod[] = [
   "PATCH",
 ];
 
-const application: Application = {
+const AppRoute: AppRouteHandle = {
   use: (path: string, middleware: RequestListener) => {
     requestListenner.mount(path, middleware);
   },
@@ -26,8 +31,10 @@ const application: Application = {
   },
 };
 
+const httpMethods: Partial<Application> = {};
+
 httpVerbs.forEach((httpVerb) => {
-  application[httpVerb] = (path: string, handler: RequestHandler) => {
+  httpMethods[httpVerb] = (path: string, handler: RequestHandler) => {
     if (typeof path !== "string" || path.trim() === "") {
       throw new Error("Path must be a non-empty string.");
     }
@@ -40,5 +47,10 @@ httpVerbs.forEach((httpVerb) => {
     requestListenner.handle(httpVerb, path, handler);
   };
 });
+
+const application: Application = {
+  ...AppRoute,
+  ...httpMethods,
+} as Application;
 
 export default application;

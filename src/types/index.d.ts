@@ -3,7 +3,7 @@ import {RequestListener} from 'http';
 type RequestHandler = (req: Request, res: Response) => void;
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS" | "PATCH"; 
 type HttpMethodMap = {
-    [method in HttpMethod]?: (path: string, handler: RequestHandler) => void;
+    [method in HttpMethod]: (path: string, handler: RequestHandler) => void;
 }
 
 type AppRouteHandle = {

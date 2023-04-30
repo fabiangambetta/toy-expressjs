@@ -1,23 +1,23 @@
 import application from '../src/application/index';
 console.log("app", application);
 
-application.GET!('/cositas', (req, res)=>{
+application.GET('/cositas', (req, res)=>{
     res.send('Escuche en cositas y te respondo');
 })
 
-application.GET!('/bolso/:id', (req, res)=>{
+application.GET('/bolso/:id', (req, res)=>{
     const {params} = req;
     const {id} = params;
     res.send('Escuche en bolso y te respondo, again' + id);
 })
 
-application.GET!('/bolso/:id/prueba/:name', (req, res)=>{
+application.GET('/bolso/:id/prueba/:name', (req, res)=>{
     const {params} = req;
     const {id} = params;
-    res.send('Escuche en bolso y te respondo, again' + id);
+    res.send('Escuche en bolso y te respondo, again  ' + JSON.stringify(req.params));
 })
 
-application.PUT!('/bolso', (req, res)=>{
+application.PUT('/bolso', (req, res)=>{
     res.send('Escuche en bolso y te respondo, PUT');
 })
 application.listen(3210);
