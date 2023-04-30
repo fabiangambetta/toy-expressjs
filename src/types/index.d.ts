@@ -1,4 +1,4 @@
-import * as http from 'http';
+import {RequestListener} from 'http';
 
 type RequestHandler = (req: Request, res: Response) => void;
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS" | "PATCH"; 
@@ -16,15 +16,14 @@ type Application = HttpMethodMap & AppRouteHandle;
 type RouteHandlers = Record<HttpMethod, Record<string, RequestHandler>>;
 type MiddlewareHandlers = Record<string, RequestHandler>;
 type Handle = (method: HttpMethod, path: string, handler: RequestHandler ) => void;
-type Use = (path: string, middleware: RequestHandler) => void;
+type MountMiddleware = (path: string, middleware: RequestHandler) => void;
 
 type RequestListenner = {
     routesToHandle: RouteHandlers;
     middlewares: MiddlewareHandlers;
-    use: Use;
+    mount: MountMiddleware;
     handle: Handle;
-    handleV2: Handle;
-    listenner: RequestHandler;
+    onRequest: RequestHandler;
     handlers: Record<HttpMethod, RouteNode>;
 }
 
@@ -34,7 +33,7 @@ type RouteNode = {
     value: string;
     type: RouteSegmentType;
     childrens: Array<RouteNode>;
-    handler?: http.RequestListener;
+    handler?: RequestListener;
 }
 
 type Param = {
@@ -45,9 +44,10 @@ type Param = {
 type RequestParams = Record<string, string>;
 type RouterMetaData = {
     params:  Array<Param>;
-    handler:  http.RequestListener;
+    handler: RequestListener;
 }
 
 
 type Request = DecoratedRequest;
 type Response = DecoratedResponse<Request>;
+

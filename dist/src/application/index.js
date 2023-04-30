@@ -16,10 +16,10 @@ const httpVerbs = [
 ];
 const application = {
     use: (path, middleware) => {
-        index_2.default.use(path, middleware);
+        index_2.default.mount(path, middleware);
     },
     listen: (port) => {
-        index_1.default.createServer(port, index_2.default.listenner);
+        index_1.default.createServer(port, index_2.default.onRequest);
     },
 };
 httpVerbs.forEach((httpVerb) => {
@@ -27,7 +27,6 @@ httpVerbs.forEach((httpVerb) => {
         // path puede ser por ejemplo /users/:id/sales
         if (typeof handler === "function") {
             index_2.default.handle(httpVerb, path, handler);
-            index_2.default.handleV2(httpVerb, path, handler);
         }
     };
 });

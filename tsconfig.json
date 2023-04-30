@@ -10,6 +10,7 @@
       "resolveJsonModule": true,
       "outDir": "./dist",
       "sourceMap": true,
+      "noImplicitAny": true
     },
     "include": ["src/**/*.ts", "src/**/*d.ts", "examples"],
     "exclude": ["node_modules"]

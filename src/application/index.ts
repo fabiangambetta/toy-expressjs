@@ -1,9 +1,9 @@
 import server from "../server/index";
 import requestListenner from "../requestListener/index";
-import * as http from "http";
+import { RequestListener } from "http";
 import { Application, HttpMethod, RequestHandler } from "../types";
 
-const httpVerbs: Array<HttpMethod> = [
+const httpVerbs: HttpMethod[] = [
   "GET",
   "PUT",
   "HEAD",
@@ -14,12 +14,12 @@ const httpVerbs: Array<HttpMethod> = [
 ];
 
 const application: Application = {
-  use: (path: string, middleware: http.RequestListener) => {
-    requestListenner.use(path, middleware);
+  use: (path: string, middleware: RequestListener) => {
+    requestListenner.mount(path, middleware);
   },
 
   listen: (port: number) => {
-    server.createServer(port, requestListenner.listenner);
+    server.createServer(port, requestListenner.onRequest);
   },
 };
 
@@ -28,7 +28,6 @@ httpVerbs.forEach((httpVerb) => {
     // path puede ser por ejemplo /users/:id/sales
     if (typeof handler === "function") {
       requestListenner.handle(httpVerb, path, handler);
-      requestListenner.handleV2(httpVerb, path, handler);
     }
   };
 });

@@ -6,7 +6,15 @@ application.GET!('/cositas', (req, res)=>{
 })
 
 application.GET!('/bolso/:id', (req, res)=>{
-    res.send('Escuche en bolso y te respondo, again' + req._params[0].value);
+    const {params} = req;
+    const {id} = params;
+    res.send('Escuche en bolso y te respondo, again' + id);
+})
+
+application.GET!('/bolso/:id/prueba/:name', (req, res)=>{
+    const {params} = req;
+    const {id} = params;
+    res.send('Escuche en bolso y te respondo, again' + id);
 })
 
 application.PUT!('/bolso', (req, res)=>{
