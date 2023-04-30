@@ -54,6 +54,7 @@ const getRouteMetadata = (
     return { params, handler };
   }
 
+  // Check if any child is the segment
   const matchSegment = childrens.find(
     (node) => node.value === segment && node.type === "SEGMENT"
   );
