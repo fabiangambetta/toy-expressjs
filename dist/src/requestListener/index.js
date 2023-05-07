@@ -33,8 +33,6 @@ const requestListener = {
         requestListener.middlewares[path] = handler;
     },
     handle: (method, path, handler) => {
-        if (typeof handler !== "function")
-            return;
         routeTree_1.default.add(requestListener.handlers[method], path, handler);
     },
 };

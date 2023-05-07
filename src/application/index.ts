@@ -4,6 +4,7 @@ import { RequestListener } from "http";
 import {
   Application,
   AppRouteHandle,
+  ChainHandler,
   HttpMethod,
   RequestHandler,
 } from "../types";
@@ -34,7 +35,7 @@ const AppRoute: AppRouteHandle = {
 const httpMethods: Partial<Application> = {};
 
 httpVerbs.forEach((httpVerb) => {
-  httpMethods[httpVerb] = (path: string, handler: RequestHandler) => {
+  httpMethods[httpVerb] = (path: string, handler: ChainHandler, ...handlers: Array<ChainHandler>) => {
     if (typeof path !== "string" || path.trim() === "") {
       throw new Error("Path must be a non-empty string.");
     }
@@ -44,7 +45,10 @@ httpVerbs.forEach((httpVerb) => {
     }
 
     // path puede ser por ejemplo /users/:id/sales
-    requestListenner.handle(httpVerb, path, handler);
+    if(handlers.length > 0)
+      requestListenner.handle(httpVerb, path, [handler, ...handlers]);
+    else
+      requestListenner.handle(httpVerb, path, handler);
   };
 });
 

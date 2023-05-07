@@ -27,7 +27,7 @@ const AppRoute = {
 };
 const httpMethods = {};
 httpVerbs.forEach((httpVerb) => {
-    httpMethods[httpVerb] = (path, handler) => {
+    httpMethods[httpVerb] = (path, handler, ...handlers) => {
         if (typeof path !== "string" || path.trim() === "") {
             throw new Error("Path must be a non-empty string.");
         }
@@ -35,7 +35,10 @@ httpVerbs.forEach((httpVerb) => {
             throw new Error("Handler must be a function.");
         }
         // path puede ser por ejemplo /users/:id/sales
-        index_2.default.handle(httpVerb, path, handler);
+        if (handlers.length > 0)
+            index_2.default.handle(httpVerb, path, [handler, ...handlers]);
+        else
+            index_2.default.handle(httpVerb, path, handler);
     };
 });
 const application = {

@@ -2,8 +2,9 @@ import {RequestListener} from 'http';
 
 type RequestHandler = (req: Request, res: Response) => void;
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS" | "PATCH"; 
+
 type HttpMethodMap = {
-    [method in HttpMethod]: (path: string, handler: RequestHandler) => void;
+    [method in HttpMethod]: (path: string, handler: ChainHandler, ...handlers: Array<ChainHandler>) => void;
 }
 
 type AppRouteHandle = {
@@ -15,7 +16,7 @@ type Application = HttpMethodMap & AppRouteHandle;
 
 type RouteHandlers = Record<HttpMethod, Record<string, RequestHandler>>;
 type MiddlewareHandlers = Record<string, RequestHandler>;
-type Handle = (method: HttpMethod, path: string, handler: RequestHandler ) => void;
+type Handle = (method: HttpMethod, path: string, handler: ChainHandler | Array<ChainHandler> ) => void;
 type MountMiddleware = (path: string, middleware: RequestHandler) => void;
 
 type RequestListenner = {
@@ -51,3 +52,5 @@ type RouterMetaData = {
 type Request = DecoratedRequest;
 type Response = DecoratedResponse<Request>;
 
+type NextFunction = ()=> void;
+type ChainHandler =  (req: Request, res: Response, next: NextFunction) =>void;

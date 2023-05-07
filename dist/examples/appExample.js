@@ -5,18 +5,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = __importDefault(require("../src/application/index"));
 console.log("app", index_1.default);
-index_1.default.GET('/cositas', (req, res) => {
+index_1.default.GET('/cositas', (req, res, next) => {
+    console.log("pasé por ac{a");
+    next();
+}, (req, res, next) => {
     res.send('Escuche en cositas y te respondo');
 });
-index_1.default.GET('/bolso/:id', (req, res) => {
+index_1.default.GET('/bolso/:id', (req, res, next) => {
+    console.log("pasé por ac{a");
+    next();
+}, (req, res, next) => {
+    console.log("pasé por ac{a");
+    next();
+}, (req, res, next) => {
+    console.log("pasé por ac{a");
+    next();
+}, (req, res, next) => {
+    console.log("pasé por ac{a");
+    next();
+}, (req, res, next) => {
     const { params } = req;
     const { id } = params;
-    res.send('Escuche en bolso y te respondo, again' + id);
+    res.send('Respondo a /bolso/:id' + id);
 });
-index_1.default.GET('/bolso/:id/prueba/:name', (req, res) => {
+index_1.default.GET('/bolso/:id/prueba/:name', (req, res, next) => {
+    console.log("pasé por ac{a");
+    next();
+}, (req, res) => {
     const { params } = req;
     const { id } = params;
-    res.send('Escuche en bolso y te respondo, again  ' + JSON.stringify(req.params));
+    res.send('respondo /bolso/:id/prueba/:name' + JSON.stringify(req.params));
 });
 index_1.default.PUT('/bolso', (req, res) => {
     res.send('Escuche en bolso y te respondo, PUT');

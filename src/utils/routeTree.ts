@@ -1,7 +1,9 @@
-import { RouteNode, RouterMetaData, RouteSegmentType } from "../types";
+import { RequestListener } from "http";
+import { ChainHandler, RouteNode, RouterMetaData, RouteSegmentType } from "../types";
 import * as http from "http";
+import { argv } from "process";
 
-const add = (tree: RouteNode, route: string, handler: http.RequestListener) => {
+const add = (tree: RouteNode, route: string, handler: ChainHandler | Array<ChainHandler>) => {
   if (!tree || tree.type !== "ROOT")
     throw new Error(
       "The expected element tree must be the root of the routeTree"
@@ -14,7 +16,7 @@ const add = (tree: RouteNode, route: string, handler: http.RequestListener) => {
 const addRecursively = (
   tree: RouteNode,
   segments: Array<string>,
-  handler: http.RequestListener
+  handler: ChainHandler | Array<ChainHandler>
 ) => {
   if (segments.length === 0) return;
   const segment = segments[0];
@@ -30,7 +32,7 @@ const addRecursively = (
       type,
       childrens: [],
     };
-    if (remainingSegments.length === 0) newChild.handler = handler;
+    if (remainingSegments.length === 0) newChild.handler = nextChaining(handler)[0];
     tree.childrens.push(newChild);
   }
   addRecursively(
@@ -86,4 +88,43 @@ const getRouteMetadata = (
   throw new Error("No route was matched by path");
 };
 
+const nextChaining = (handlers: ChainHandler |  Array<ChainHandler>) => {
+  const result: Array<RequestListener> =  Array.isArray(handlers) ? handlers.map((handler, index) =>{
+    return (req, res) => {
+      handler(req, res, ()=> {
+        handlers[index+1](req, res, ()=> {})
+      })
+    }
+  }):  [
+    (req, res)  => {
+      handlers(req, res, () => {});
+    },
+  ];
+  return result;
+}
+      
+
+/*
+
+const nextChaining = (handlers: ChainHandler | Array<ChainHandler>) => {
+  const result: Array<RequestListener> = Array.isArray(handlers)
+    ? handlers.map((handler, index) => {
+        const currentNext  =
+          index < handlers.length
+            ? handlers[index + 1]
+  
+            : () => {};
+        return (req, res) => {
+          handler(req, res, currentNext(req,res));
+        };
+      })
+    : [
+        (req, res)  => {
+          handlers(req, res, () => {});
+        },
+      ];
+
+  return result;
+};
+*/
 export default { add, addRecursively, getRouteMetadata };

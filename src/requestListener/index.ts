@@ -22,7 +22,7 @@ const requestListener: RequestListenner = {
   middlewares: {},
 
   // Callback que se invoca siempre que se recibe una request
-  onRequest: (req: DecoratedRequest, res) => {
+  onRequest: (req, res) => {
     const { method, url } = req;
     if (!method || !url) throw new Error("method or url are empty on request");
     const segments = ((url as unknown) as string ).split("/");
@@ -41,7 +41,6 @@ const requestListener: RequestListenner = {
   },
 
   handle: (method, path, handler) => {
-    if (typeof handler !== "function") return;
     routeTree.add(requestListener.handlers[method], path, handler);
   },
 };
