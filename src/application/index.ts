@@ -35,20 +35,23 @@ const AppRoute: AppRouteHandle = {
 const httpMethods: Partial<Application> = {};
 
 httpVerbs.forEach((httpVerb) => {
-  httpMethods[httpVerb] = (path: string, handler: ChainHandler, ...handlers: Array<ChainHandler>) => {
+  httpMethods[httpVerb] = (
+    path: string,
+    handler: ChainHandler,
+    ...handlers: Array<ChainHandler>
+  ) => {
     if (typeof path !== "string" || path.trim() === "") {
       throw new Error("Path must be a non-empty string.");
     }
 
     if (typeof handler !== "function") {
-      throw new Error("Handler must be a function.");
+      throw new Error("Handler must be a function!.");
     }
 
     // path puede ser por ejemplo /users/:id/sales
-    if(handlers.length > 0)
+    if (handlers.length > 0)
       requestListenner.handle(httpVerb, path, [handler, ...handlers]);
-    else
-      requestListenner.handle(httpVerb, path, handler);
+    else requestListenner.handle(httpVerb, path, handler);
   };
 });
 
