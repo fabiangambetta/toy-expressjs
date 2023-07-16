@@ -32,7 +32,7 @@ httpVerbs.forEach((httpVerb) => {
             throw new Error("Path must be a non-empty string.");
         }
         if (typeof handler !== "function") {
-            throw new Error("Handler must be a function.");
+            throw new Error("Handler must be a function!.");
         }
         // path puede ser por ejemplo /users/:id/sales
         if (handlers.length > 0)

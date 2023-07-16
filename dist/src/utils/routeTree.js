@@ -31,7 +31,7 @@ const addRecursively = (tree, segments, handler) => {
 const getRouteMetadata = (tree, segments) => {
     const [segment, ...remainingSegments] = segments;
     const { handler, value, type, childrens } = tree;
-    // If the current node has a handler defined and there are no more path elements left to process 
+    // If the current node has a handler defined and there are no more path elements left to process
     if (handler && remainingSegments.length === 0) {
         // If current node is a PARAM node, get current value and name
         const params = type === "PARAM" ? [{ name: value, value: segment }] : [];
@@ -59,42 +59,41 @@ const getRouteMetadata = (tree, segments) => {
     }
     throw new Error("No route was matched by path");
 };
-const nextChaining = (handlers) => {
-    const result = Array.isArray(handlers) ? handlers.map((handler, index) => {
-        return (req, res) => {
-            handler(req, res, () => {
-                handlers[index + 1](req, res, () => { });
-            });
-        };
-    }) : [
-        (req, res) => {
-            handlers(req, res, () => { });
-        },
-    ];
-    return result;
-};
 /*
-
 const nextChaining = (handlers: ChainHandler | Array<ChainHandler>) => {
   const result: Array<RequestListener> = Array.isArray(handlers)
     ? handlers.map((handler, index) => {
-        const currentNext  =
-          index < handlers.length
-            ? handlers[index + 1]
-  
-            : () => {};
         return (req, res) => {
-          handler(req, res, currentNext(req,res));
+          handler(req, res, () => {
+            handlers[index + 1](req, res, () => {});
+          });
         };
       })
     : [
-        (req, res)  => {
+        (req, res) => {
           handlers(req, res, () => {});
         },
       ];
-
   return result;
 };
 */
+const nextChaining = (handlers) => {
+    const result = Array.isArray(handlers)
+        ? handlers.map((handler, index) => {
+            return (req, res) => {
+                handler(req, res, () => {
+                    if (index < handlers.length - 1) {
+                        result[index + 1](req, res);
+                    }
+                });
+            };
+        })
+        : [
+            (req, res) => {
+                handlers(req, res, () => { });
+            },
+        ];
+    return result;
+};
 exports.default = { add, addRecursively, getRouteMetadata };
 //# sourceMappingURL=routeTree.js.map

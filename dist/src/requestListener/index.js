@@ -14,7 +14,6 @@ const httpVerbs = [
     "PATCH",
 ];
 const requestListener = {
-    routesToHandle: {},
     handlers: {},
     middlewares: {},
     // Callback que se invoca siempre que se recibe una request
@@ -22,20 +21,22 @@ const requestListener = {
         const { method, url } = req;
         if (!method || !url)
             throw new Error("method or url are empty on request");
-        const segments = url.split("/");
-        const routeMetadata = routeTree_1.default.getRouteMetadata(requestListener.handlers[method], segments.filter(segment => segment != ''));
+        const segments = getSegmentsFromUrl(url);
+        const routeMetadata = routeTree_1.default.getRouteMetadata(requestListener.handlers[method], segments.filter((segment) => segment != ""));
         req.setParams(routeMetadata.params);
-        //
         if (typeof routeMetadata.handler === "function")
             routeMetadata.handler(req, res);
     },
+    // Asigna un middleware a una ruta específica
     mount: (path, handler) => {
         requestListener.middlewares[path] = handler;
     },
+    // Asigna un handler a un método y ruta específicos
     handle: (method, path, handler) => {
         routeTree_1.default.add(requestListener.handlers[method], path, handler);
     },
 };
+// Se crea el root de cada arbol por método
 httpVerbs.forEach((httpVerb) => {
     requestListener.handlers[httpVerb] = {
         value: "/",
@@ -43,5 +44,8 @@ httpVerbs.forEach((httpVerb) => {
         childrens: [],
     };
 });
+const getSegmentsFromUrl = (url) => {
+    return url.split("/");
+};
 exports.default = requestListener;
 //# sourceMappingURL=index.js.map

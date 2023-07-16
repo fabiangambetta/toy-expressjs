@@ -29,12 +29,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const http = __importStar(require("http"));
 const decoratedRequest_1 = __importDefault(require("../extended/decoratedRequest"));
 const decoratedResponse_1 = __importDefault(require("../extended/decoratedResponse"));
-const serverOptions = { IncomingMessage: decoratedRequest_1.default, ServerResponse: decoratedResponse_1.default };
+const serverOptions = {
+    IncomingMessage: decoratedRequest_1.default,
+    ServerResponse: decoratedResponse_1.default,
+};
 const server = {
     createServer: (port, requestListener) => {
-        http
-            .createServer(serverOptions, requestListener)
-            .listen(port);
+        http.createServer(serverOptions, requestListener).listen(port);
         console.log(`App listening on port ${port}`);
     },
 };
