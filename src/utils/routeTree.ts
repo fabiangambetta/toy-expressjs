@@ -5,8 +5,6 @@ import {
   RouterMetaData,
   RouteSegmentType,
 } from "../types";
-import * as http from "http";
-import { argv } from "process";
 
 const add = (
   tree: RouteNode,
@@ -97,25 +95,6 @@ const getRouteMetadata = (
 
   throw new Error("No route was matched by path");
 };
-
-/*
-const nextChaining = (handlers: ChainHandler | Array<ChainHandler>) => {
-  const result: Array<RequestListener> = Array.isArray(handlers)
-    ? handlers.map((handler, index) => {
-        return (req, res) => {
-          handler(req, res, () => {
-            handlers[index + 1](req, res, () => {});
-          });
-        };
-      })
-    : [
-        (req, res) => {
-          handlers(req, res, () => {});
-        },
-      ];
-  return result;
-};
-*/
 
 const nextChaining = (handlers: ChainHandler | Array<ChainHandler>) => {
   const result: Array<RequestListener> = Array.isArray(handlers)
