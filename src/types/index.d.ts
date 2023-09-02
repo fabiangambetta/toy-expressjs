@@ -8,7 +8,9 @@ type HttpMethod =
   | "DELETE"
   | "HEAD"
   | "OPTIONS"
-  | "PATCH";
+  | "PATCH"
+  | "TRACE"
+  | "CONNECT";
 
 type HttpMethodMap = {
   [method in HttpMethod]: (

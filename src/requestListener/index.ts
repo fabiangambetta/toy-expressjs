@@ -1,10 +1,4 @@
-import DecoratedRequest from "../extended/decoratedRequest";
-import {
-  HttpMethod,
-  RequestListenner,
-  RouteHandlers,
-  RouteNode,
-} from "../types";
+import type { HttpMethod, RequestListenner, RouteNode } from "../types";
 import routeTree from "../utils/routeTree";
 const httpVerbs: Array<HttpMethod> = [
   "GET",
@@ -14,6 +8,8 @@ const httpVerbs: Array<HttpMethod> = [
   "OPTIONS",
   "POST",
   "PATCH",
+  "TRACE",
+  "CONNECT"
 ];
 
 const requestListener: RequestListenner = {
@@ -22,13 +18,13 @@ const requestListener: RequestListenner = {
 
   // Callback que se invoca siempre que se recibe una request
   onRequest: (req, res) => {
-    const { method, url } = req;
+    const { method, url }: { method: HttpMethod, url: string } = req;
     if (!method || !url) throw new Error("method or url are empty on request");
     const segments = getSegmentsFromUrl(url);
-
-    const routeMetadata = routeTree.getRouteMetadata(
-      requestListener.handlers[method as HttpMethod],
-      segments.filter((segment) => segment != "")
+    const validSegments = segments.filter((segment) => segment != "");
+    const routeMetadata = routeTree.getRouteMetaData(
+      requestListener.handlers[method],
+      validSegments
     );
     req.setParams(routeMetadata.params);
     if (typeof routeMetadata.handler === "function")

@@ -15,8 +15,10 @@
   "author": "fgambetta",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^29.5.4",
     "@types/node": "^18.15.11",
-    "jest": "^29.4.1",
+    "jest": "^29.6.4",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.0.4"
   }
 }

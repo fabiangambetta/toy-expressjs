@@ -1,5 +1,5 @@
 import { RequestListener } from "http";
-import {
+import type {
   ChainHandler,
   RouteNode,
   RouterMetaData,
@@ -50,48 +50,96 @@ const addRecursively = (
   );
 };
 
-const getRouteMetadata = (
+/**
+ *
+ * @param tree An in-memory structure that, for each registered route, knows, among other things,
+ * the handler responsible for addressing a request for that route.
+ * @param segments A list of segments from the url, /segA/segB/segC -> ["segA", "segB", "segC"]
+ * @returns An object with the handler and the params extracted from the url.
+ */
+
+const getRouteMetaData = (
   tree: RouteNode,
   segments: Array<string>
 ): RouterMetaData => {
-  const [segment, ...remainingSegments] = segments;
   const { handler, value, type, childrens } = tree;
-
-  // If the current node has a handler defined and there are no more path elements left to process
-  if (handler && remainingSegments.length === 0) {
-    // If current node is a PARAM node, get current value and name
-    const params = type === "PARAM" ? [{ name: value, value: segment }] : [];
-    return { params, handler };
+  const [segment, ...remainingSegments] = segments;
+  if (type === "ROOT") {
+    if (segments.length === 0) return { params: [], handler: handler! };
+    else {
+      const firstSegment = segments[0];
+      const segmentMatch = childrens.find(
+        (node) => node.value === firstSegment
+      );
+      if (segmentMatch) return getRouteMetaData(segmentMatch, segments);
+      else {
+        const paramMatch = childrens.find((node) => node.type === "PARAM");
+        if (paramMatch) return getRouteMetaData(paramMatch, segments);
+        else throw new Error("No route was matched by path");
+      }
+    }
   }
 
-  // Check if any child is the segment
-  const matchSegment = childrens.find(
-    (node) => node.value === segment && node.type === "SEGMENT"
-  );
-
-  if (matchSegment) {
-    return getRouteMetadata(matchSegment, remainingSegments);
+  if(type === "SEGMENT"){
+    if(remainingSegments.length === 0){
+      // Soy el handler buscado para un segment
+      return { params: [], handler: handler! };
+    }
+    else {
+      const segmentMatch = childrens.find(
+        (node) => node.value === remainingSegments[0]
+      );
+      if (segmentMatch)
+        // si el siguiente también es un segment
+        return getRouteMetaData(
+          segmentMatch,
+          remainingSegments
+        ); // Elimino el primro
+      else {
+        const paramMatch = childrens.find((node) => node.type === "PARAM");
+        if (paramMatch) {
+          return getRouteMetaData(paramMatch, remainingSegments);
+        } else {
+          throw new Error("No route was matched by path");
+        }
+      }
+    }
   }
 
-  const matchParams = childrens.find((node) => node.type === "PARAM");
-
-  if (matchParams) {
-    const updatedSegments =
-      remainingSegments.length === 0 ? segments : remainingSegments;
-    const result = getRouteMetadata(matchParams, updatedSegments);
-
-    if (remainingSegments.length !== 0) {
-      return {
-        params: [...result.params, { name: matchParams.value, value: segment }],
-        handler: result.handler,
-      };
+  if(type === "PARAM") {
+    if (remainingSegments.length === 0) {
+      // Soy el handler buscado para un param
+      return { params: [{ name: value, value: segment }], handler: handler! };
     }
 
-    return {
-      params: [...result.params],
-      handler: result.handler,
-    };
+    // Si soy un param conservo el valor de mi segment
+    if (remainingSegments.length !== 0) {
+      const currentParam = { name: value, value: segment };
+      const segmentMatch = childrens.find(
+        (node) => node.value === remainingSegments[0]
+      );
+      if (segmentMatch) {
+        // si el siguiente también es un segment
+        const result = getRouteMetaData(segmentMatch, remainingSegments); // Elimino el primro
+        return {
+          params: [...result.params, currentParam],
+          handler: result.handler,
+        };
+      } else {
+        const paramMatch = childrens.find((node) => node.type === "PARAM");
+        if (paramMatch) {
+          const result = getRouteMetaData(paramMatch, remainingSegments);
+          return {
+            params: [...result.params, currentParam],
+            handler: result.handler,
+          };
+        } else {
+          throw new Error("No route was matched by path");
+        }
+      }
+    }
   }
+
 
   throw new Error("No route was matched by path");
 };
@@ -117,4 +165,4 @@ const nextChaining = (handlers: ChainHandler | Array<ChainHandler>) => {
   return result;
 };
 
-export default { add, addRecursively, getRouteMetadata };
+export default { add, addRecursively, getRouteMetaData };
